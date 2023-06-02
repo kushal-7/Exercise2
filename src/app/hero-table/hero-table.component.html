@@ -1,0 +1,15 @@
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let hero of heroes" (click)="onRowClick(hero)">
+            <td>{{ hero.id }}</td>
+            <td>{{ hero.name }}</td>
+        </tr>
+
+    </tbody>
+</table>
