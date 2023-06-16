@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { Hero } from '../hero';
-import { HEROES } from '../mock-heros';
+import { HeroService } from '../hero.service';
 
 @Component({
   selector: 'app-heroes',
@@ -9,32 +9,31 @@ import { HEROES } from '../mock-heros';
   styleUrls: ['./heroes.component.css']
 })
 export class HeroesComponent implements OnInit {
-  heroes = HEROES;
-  selectedHero?: Hero;
-  heroForm: FormGroup = new FormGroup({});
+  heroes: Hero[] = [];
 
+  constructor(private heroService: HeroService) { }
 
-  constructor(private formBuilder: FormBuilder) {}
-
-  ngOnInit() {
-    this.heroForm = this.formBuilder.group({
-      name: ['', Validators.required]
-    });
+  ngOnInit(): void {
+    this.getHeroes();
   }
 
-  onSelect(hero: Hero) {
-    this.selectedHero = hero;
-    this.heroForm.patchValue({
-      name: this.selectedHero.name
-    });
+  getHeroes(): void {
+    this.heroService.getHeroes()
+      .subscribe(heroes => this.heroes = heroes);
   }
 
-  onSubmit() {
-    if (this.heroForm.valid && this.selectedHero) {
-      return this.selectedHero.name = this.heroForm.value.name;
-    }
+  add(name: string): void {
+    name = name.trim();
+    if (!name) { return; }
+    this.heroService.addHero({ name } as Hero)
+      .subscribe(hero => {
+        this.heroes.push(hero);
+      });
   }
-  
+
+  delete(hero: Hero): void {
+    this.heroes = this.heroes.filter(h => h !== hero);
+    this.heroService.deleteHero(hero.id).subscribe();
+  }
+
 }
-
-
